@@ -85,3 +85,44 @@ def print_2d_grid(grid):
     """Prints a 2d grid of characters for debugging purposes"""
     print("\n".join("".join(line) for line in grid))
     print("\n")
+
+
+# Grid methods
+
+NEIGHBORS_4 = [(1, 0), (-1, 0), (0, 1), (0, -1)]
+NEIGHBORS_8 = NEIGHBORS_4 + [(1, 1), (-1, 1), (1, -1), (-1, -1)]
+
+
+def grid_outside(grid, y, x):
+    """Checks if a position is outside the grid"""
+    if y > len(grid) - 1 or y < 0:
+        return True
+    if x > len(grid[0]) - 1 or x < 0:
+        return True
+    return False
+
+
+def grid_neighbors_positions(grid, y, x, diagonal=False, include_invalid=False):
+    """Gets all neighbor positions on a grid, either including diagonals or not, and including invalid positions or not"""
+    if diagonal:
+        offsets = NEIGHBORS_8
+    else:
+        offsets = NEIGHBORS_4
+    for off_y, off_x in offsets:
+        neighbor_y, neighbor_x = y + off_y, x + off_x
+        if not include_invalid and grid_outside(grid, neighbor_y, neighbor_x):
+            continue
+        yield (neighbor_y, neighbor_x)
+
+
+def grid_neighbors(grid, y, x, diagonal=False):
+    """Gets all neighbor values on a grid, including diagonals or not"""
+    for neighbor_y, neighbor_x in grid_neighbors_positions(grid, y, x, diagonal, False):
+        yield grid[neighbor_y][neighbor_x]
+
+
+def grid_iterate(grid):
+    """Iterate over the grid and return positions in y, x order"""
+    for y in range(len(grid)):
+        for x in range(len(grid[0])):
+            yield y, x
